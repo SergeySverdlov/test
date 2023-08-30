@@ -1,0 +1,55 @@
+version: "3"
+
+services:
+    nginx:
+        build:
+            context: docker/nginx
+        container_name: nginx
+        volumes:
+            - ./:/var/www/test-back
+            - ./storage/app/public/:/var/www/test-back/public/storage/
+        restart: always
+        ports:
+            - "${DOCKER_NGINX_FRONT_PORT}:80"
+            - "${DOCKER_NGINX_BACK_PORT}:8000"
+        depends_on:
+            - php-fpm
+        networks:
+            - internal
+    php-fpm:
+        build:
+            context: docker/php-fpm
+        container_name: php_fpm_test
+        volumes:
+            - ./:/var/www/test-back
+        restart: always
+        environment:
+            XDEBUG_CONFIG: "remote_host=192.168.220.1 remote_enable=1"
+            PHP_IDE_CONFIG: "serverName=Docker"
+            XDG_CONFIG_HOME: "${XDG_CONFIG_HOME}"
+        depends_on:
+            - db
+        networks:
+            - internal
+    db:
+        image: postgres
+        container_name: db
+        restart: always
+        ports:
+            - "${DOCKER_DB_PORT}:5432"
+        networks:
+            - internal
+        environment:
+            - POSTGRES_DB=${DB_DATABASE}
+            - POSTGRES_USER=${DB_USERNAME}
+            - POSTGRES_PASSWORD=${DB_PASSWORD}
+        volumes:
+            - ./docker/postgres/datadir:/var/lib/postgresql/data
+networks:
+    internal:
+        driver: bridge
+        ipam:
+            driver: default
+            config:
+                - subnet: 192.168.220.0/28
+
