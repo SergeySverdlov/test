@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Profile>
  */
-class ProfileFactory extends Factory
+class ServicesFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,11 +17,9 @@ class ProfileFactory extends Factory
     public function definition()
     {
         return [
-            'email' => $this->faker->email(),
-            'whatsapp' => $this->faker->phoneNumber(),
-            'telegram' => $this->faker->phoneNumber(),
-            'viber' => $this->faker->phoneNumber(),
             'user_id' => $this->faker->unique()->randomDigitNotNull(),
+            'service_name' => 'telegram',
+            'contact_info' => $this->faker->phoneNumber(),
         ];
     }
 }

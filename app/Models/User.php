@@ -13,8 +13,8 @@ class User extends Model
         'name',
     ];
 
-    public function profile(){
-        return $this->hasOne(Profile::class, 'user_id', 'id');
+    public function services(){
+        return $this->hasMany(Services::class, 'user_id', 'id');
     }
 
     use HasFactory;

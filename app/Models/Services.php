@@ -2,18 +2,17 @@
 
 namespace App\Models;
 
+use App\Traits\Sender;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Profile extends Model
+class Services extends Model
 {
+    use Sender;
     protected $fillable = [
-        'email',
-        'whatsapp',
-        'telegram',
-        'viber',
-        'address',
         'user_id',
+        'service_name',
+        'contact_info'
     ];
 
     public function user(){

@@ -8,13 +8,9 @@ use Illuminate\Support\Facades\Mail;
 
 trait Notification
 {
-    public function emailSend($resultPrice){
-        $profile = $this->profile;
-        if($profile->email){
-            //send on email
-        }
-        if($profile->whatsapp){
-            //send on whatsapp
+    public function userSendServices($resultPrice){
+        foreach ($this->services as $service) {
+            $service->sendNotif($resultPrice);
         }
     }
 }

@@ -12,33 +12,38 @@ use Illuminate\Support\Facades\DB;
 
 class BuyLogicServices
 {
+     private $order = null;
+     private $user = null;
+     private $resultPrice = 0;
     public function starter(Request $request){
         try {
             DB::transaction(function() use ($request) {
-                $user = User::find($request->userId);
-                $order = Order::create([
-                    'user_id' => $user->id,
+                $this->user = User::find($request->userId);
+                $this->order = Order::create([
+                    'user_id' => $this->user->id,
                 ]);
-                $resultPrice = 0;
                 foreach ($request->goods as $element) {
                     $product = Good::find($element['id']);
                     if ($product->count < $element['count']){
                         throw new \Exception('Не достаточно товара на складе!');
                     }
                     $product->update(['count' => $product->count - $element['count']]);
-                    $resultPrice += $element['count'] * $product->price;
+                    $this->resultPrice += $element['count'] * $product->price;
                     SoldPosition::create([
-                        'user_id' => $user->id,
+                        'user_id' => $this->user->id,
                         'goods_id' => $product->id,
-                        'order_id' => $order->id,
+                        'order_id' => $this->order->id,
                         'price' => $product->price,
                         'count' => $element['count'],
                     ]);
                 }
-                $order->update(['resultPrice' => $resultPrice]);
-                $user->emailSend($resultPrice/100);
+                $this->order->update(['resultPrice' => $this->resultPrice]);
             });
-            return response()->json(['message' => 'Заказ оформлен, вам будет отправленно сообщение по контактным данным!'], JsonResponse::HTTP_OK);
+            if (Order::find($this->order->id)){
+                $this->user->userSendServices($this->resultPrice/100);
+                return response()->json(['message' => 'Заказ оформлен, вам будет отправленно сообщение по контактным данным!'], JsonResponse::HTTP_OK);
+            }
+            return response()->json(['message' => 'Что-то пошло не так, попробуйте позже.'], JsonResponse::HTTP_NOT_ACCEPTABLE);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], JsonResponse::HTTP_NOT_ACCEPTABLE);
         }

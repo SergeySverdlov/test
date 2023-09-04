@@ -14,6 +14,6 @@ class GoodTableSeeder extends Seeder
      */
     public function run()
     {
-        Good::factory(10000)->create();
+        Good::factory(1000)->create();
     }
 }

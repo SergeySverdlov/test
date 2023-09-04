@@ -2,11 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Models\Profile;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Services;
 use Illuminate\Database\Seeder;
 
-class ProfileSeeder extends Seeder
+class ServicesSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -15,6 +14,6 @@ class ProfileSeeder extends Seeder
      */
     public function run()
     {
-        Profile::factory(9)->create();
+        Services::factory(9)->create();
     }
 }
